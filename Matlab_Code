@@ -1,0 +1,34 @@
+myMap = binaryOccupancyMap(10,10,5);
+walls = zeros(50,50);
+walls(1,:) = 1; % Top wall
+walls(end,:) = 1; % Bottom wall
+walls(:,1) = 1; % Left wall
+walls(:,end) = 1; % Right wall
+walls(1:30,15) = 1; % Left division
+walls(25:end,25) = 1; % Middle division
+walls(1:30,35) = 1; % Right division
+setOccupancy(myMap,[1 1],walls,"grid")
+show(myMap);
+inflateRadius = 0.3;
+inflate(myMap,inflateRadius)
+show(myMap)
+prm=mobileRobotPRM;
+prm.NumNodes = 50;
+prm.ConnectionDistance = 80;
+prm.Map = myMap;
+show(prm)
+disp('Cick for start location');
+startLocation = ginput(1);
+disp('Click for goal postion')
+endLocation = ginput(1);
+path = findpath(prm,startLocation,endLocation);
+
+while isempty(path)
+    prm.NumNodes = prm.NumNodes + 20;
+    update(prm);
+    path=findpath(prm,startLocation,endLocation);
+    show(prm)
+    pause(1);
+end
+
+show(prm)
